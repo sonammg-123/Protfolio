@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonam Gupta · SQL & Java dev</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Inter + Space Grotesk -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ----- RESET & VARIABLES (dark theme, blue/purple accent) ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 30% 30%, #0c0f1e, #070914);
+      color: #e0e4f5;
+      line-height: 1.6;
+    }
+
+    :root {
+      --accent: #6d5cf3;
+      --accent-soft: #8f82ff;
+      --card-bg: rgba(18, 22, 40, 0.75);
+      --border-glow: rgba(109, 92, 243, 0.25);
+      --hover-lift: 0 20px 30px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(130, 110, 255, 0.3);
+    }
+
+    /* ----- UTILITY & LAYOUT ----- */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    section {
+      padding: 5rem 0 4rem;
+    }
+
+    .section-title {
+      font-size: 2.3rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 2.8rem;
+      position: relative;
+      display: inline-block;
+      background: linear-gradient(135deg, #ffffff, #c0b9ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #322b80);
+      border-radius: 4px;
+    }
+
+    /* ----- REVEAL ON SCROLL (smooth) ----- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.1, 1), transform 0.7s cubic-bezier(0.2, 0.9, 0.1, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ----- NAVBAR (sticky, glass) ----- */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 10, 22, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(110, 90, 230, 0.25);
+      padding: 1rem 0;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      background: linear-gradient(145deg, #aab5ff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      flex-wrap: wrap;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      color: #cfd6ff;
+      text-decoration: none;
+      font-size: 0.98rem;
+      transition: 0.2s;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+    .nav-links a:hover {
+      color: white;
+      border-bottom-color: var(--accent);
+    }
+
+    /* ----- HERO SECTION (with new image) ----- */
+    .hero {
+      padding: 4rem 0 2rem;
+    }
+
+    .hero-grid {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-content {
+      flex: 1 1 450px;
+    }
+
+    .hero-content h1 {
+      font-size: 3.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #b9bcff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .typed-wrap {
+      font-size: 2rem;
+      font-weight: 500;
+      margin: 1.5rem 0 1rem;
+      color: #cfd6ff;
+    }
+    #typing {
+      color: var(--accent);
+      border-right: 3px solid var(--accent);
+      padding-right: 6px;
+      animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink { 50% { border-color: transparent; } }
+
+    .hero-desc {
+      font-size: 1.2rem;
+      max-width: 600px;
+      color: #b1bbf0;
+      margin: 1rem 0 2.2rem;
+    }
+
+    /* ----- NEW IMAGE STYLE (matches reference) ----- */
+    .hero-image {
+      flex: 0 0 300px;
+      text-align: center;
+    }
+    .hero-image img {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 40% 60% 30% 70% / 50% 40% 60% 50%;
+      background: linear-gradient(145deg, #4a3f96, #1e1b48);
+      padding: 8px;
+      box-shadow: 0 20px 30px -10px #000000aa, 0 0 0 2px var(--accent) inset;
+      object-fit: cover;
+      aspect-ratio: 1/1;
+      filter: grayscale(0.2) brightness(1.05);
+      transition: 0.3s;
+    }
+    .hero-image img:hover {
+      transform: scale(1.02);
+      border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1.3rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: white;
+      padding: 0.8rem 2.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      backdrop-filter: blur(5px);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      box-shadow: 0 8px 18px rgba(90, 70, 230, 0.4);
+    }
+    .btn-primary:hover {
+      background: #7c6eff;
+      border-color: #a89eff;
+      transform: translateY(-3px);
+    }
+    .btn-outline:hover {
+      background: rgba(109, 92, 243, 0.15);
+      border-color: #9f94ff;
+      transform: translateY(-3px);
+    }
+
+    .social-icons {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 1.8rem;
+    }
+    .social-icons a {
+      color: #b7c0f0;
+      font-size: 2rem;
+      transition: 0.2s;
+    }
+    .social-icons a:hover { color: var(--accent); transform: scale(1.07); }
+
+    /* ----- ABOUT / CARDS (soft glass) ----- */
+    .about-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(130, 110, 255, 0.2);
+      border-radius: 40px;
+      padding: 2.2rem;
+      box-shadow: 0 18px 30px -16px #00000080;
+    }
+
+    /* ----- SKILLS (minimal bubble grid) ----- */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8rem;
+      justify-content: space-between;
+    }
+    .skill-category {
+      background: rgba(18, 22, 45, 0.7);
+      backdrop-filter: blur(6px);
+      border: 1px solid #2e3560;
+      border-radius: 36px;
+      padding: 1.8rem 2.2rem;
+      flex: 1 1 200px;
+    }
+    .skill-category h3 {
+      color: var(--accent-soft);
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      font-size: 1.3rem;
+    }
+    .skill-category ul {
+      list-style: none;
+    }
+    .skill-category li {
+      margin: 0.6rem 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .skill-category i { color: var(--accent); width: 20px; }
+
+    /* ----- PROJECT CARDS (clean text focus) ----- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .project-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(120, 100, 255, 0.15);
+      border-radius: 32px;
+      padding: 1.8rem 1.8rem 2rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 16px 24px -12px #03030f;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--hover-lift);
+      border-color: rgba(150, 130, 255, 0.6);
+    }
+
+    .project-icon {
+      font-size: 2.4rem;
+      background: rgba(109, 92, 243, 0.2);
+      width: 60px;
+      height: 60px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+      border: 1px solid var(--accent);
+      color: var(--accent-soft);
+    }
+
+    .project-card h3 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .project-desc {
+      color: #b5c0f0;
+      font-size: 0.98rem;
+      margin: 0.5rem 0 1rem;
+      line-height: 1.5;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .tech-tags span {
+      background: rgba(40, 45, 80, 0.8);
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      border: 1px solid #404880;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    .github-link {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .star-count {
+      background: #1c2240;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      border: 1px solid #3a4080;
+    }
+
+    /* ----- CERTIFICATES (icon only, clean) ----- */
+    .cert-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid #2a3155;
+      border-radius: 30px;
+      padding: 1.8rem;
+      transition: 0.2s;
+    }
+    .cert-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-5px);
+      box-shadow: var(--hover-lift);
+    }
+    .cert-icon {
+      font-size: 2.2rem; margin-bottom: 1rem;
+    }
+
+    /* ----- CONTACT / STRENGTHS ----- */
+    .strength-contact {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .strength-box {
+      background: #151c32;
+      border-radius: 40px;
+      padding: 2.2rem;
+      flex: 1 1 280px;
+      border: 1px solid #333d6e;
+    }
+    .contact-form {
+      background: #151c32;
+      border-radius: 40px;
+      padding: 2.2rem;
+      flex: 2 1 400px;
+      border: 1px solid #333d6e;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      background: #1f274a;
+      border: 1px solid #414b82;
+      border-radius: 50px;
+      padding: 1rem 1.5rem;
+      color: white;
+      margin-bottom: 1.2rem;
+    }
+    .submit-btn {
+      background: var(--accent);
+      border: none;
+      width: 100%;
+      padding: 1rem;
+      border-radius: 60px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ----- FOOTER (clean, no html/css/js line) ----- */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid #1f254a;
+      color: #7b84b0;
+      font-size: 1rem;
+    }
+
+    /* responsive */
+    @media (max-width:650px) {
+      .nav-container { flex-direction: column; gap: 0.5rem; }
+      .hero-content h1 { font-size: 2.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- STICKY NAVIGATION -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <span class="logo">Sonam Gupta</span>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#certificates">Certificates</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION (with new image, typing starts with SQL Developer) -->
+  <section id="home" class="hero reveal">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <h1>Sonam Gupta</h1>
+        <div class="typed-wrap">I'm <span id="typing"></span></div>
+        <p class="hero-desc">I am a B.Tech student passionate about Java backend development and data-driven systems. I enjoy building structured applications, designing databases, and writing efficient SQL.</p>
+        <div class="btn-group">
+          <a href="#projects" class="btn btn-primary"><i class="fas fa-arrow-right"></i> View Projects</a>
+          <a href="#" class="btn btn-outline"><i class="fas fa-download"></i> Download Resume</a>
+        </div>
+        <div class="social-icons">
+          <a href="https://github.com/sonammg-123" target="_blank"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/sonam-gupta-a9102b2b8/" target="_blank"><i class="fab fa-linkedin"></i></a>
+          <a href="mailto:Sonam.mg@somaiya.edu"><i class="fas fa-envelope"></i></a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <!-- The image you requested (modern developer illustration) -->
+        <img src="https://cdn.elearningindustry.com/wp-content/uploads/2021/07/shutterstock_1726716845-1-1024x683.jpg" alt="Sonam Gupta - developer illustration">
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section id="about" class="reveal">
+    <div class="container">
+      <h2 class="section-title">About</h2>
+      <div class="about-card">
+        <p style="font-size:1.2rem; margin-bottom:1.5rem;">I am currently pursuing B.Tech in Electronics and Telecommunications at K J Somaiya Institute of Technology. I have experience building backend systems using Java and MySQL, including booking and payroll systems.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+          <div><i class="fas fa-graduation-cap" style="color:var(--accent);"></i> <strong>B.Tech E&TC</strong> · KJ Somaiya, 2022–2026</div>
+          <div><i class="fas fa-star"></i> CGPA: 6.88</div>
+          <div><i class="fas fa-map-pin"></i> Navi Mumbai</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS SECTION -->
+  <section id="skills" class="reveal">
+    <div class="container">
+      <h2 class="section-title">Skills & tools</h2>
+      <div class="skills-grid">
+        <div class="skill-category"><h3><i class="fas fa-code"></i> Programming</h3><ul><li><i class="fas fa-angle-right"></i> Java</li><li><i class="fas fa-angle-right"></i> SQL</li><li><i class="fas fa-angle-right"></i> OOP</li></ul></div>
+        <div class="skill-category"><h3><i class="fas fa-database"></i> Backend</h3><ul><li>JDBC</li><li>Spring Boot (basics)</li><li>Hibernate (basics)</li><li>Maven</li></ul></div>
+        <div class="skill-category"><h3><i class="fas fa-table"></i> Databases</h3><ul><li>MySQL</li><li>Relational DB</li></ul></div>
+        <div class="skill-category"><h3><i class="fas fa-tools"></i> Tools & office</h3><ul><li>GitHub, Eclipse, VS Code</li><li>Excel, Word, PPT</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS SECTION (GitHub + manual) -->
+  <section id="projects" class="reveal">
+    <div class="container">
+      <h2 class="section-title">Projects · GitHub integration</h2>
+      <div class="card-grid" id="project-grid"></div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATES SECTION -->
+  <section id="certificates" class="reveal">
+    <div class="container">
+      <h2 class="section-title">Certificates</h2>
+      <div class="card-grid" id="cert-grid"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT + STRENGTHS -->
+  <section id="contact" class="reveal">
+    <div class="container">
+      <h2 class="section-title">Strengths & contact</h2>
+      <div class="strength-contact">
+        <div class="strength-box">
+          <h3 style="color:var(--accent); margin-bottom:1.4rem;">💪 Strengths</h3>
+          <ul style="list-style:none;">
+            <li>✓ Hardworking & reliable</li>
+            <li>✓ High attention to detail</li>
+            <li>✓ Follow structured processes</li>
+            <li>✓ Quick learner & adaptable</li>
+          </ul>
+          <div style="margin-top:2rem;"><i class="fas fa-envelope"></i> Sonam.mg@somaiya.edu</div>
+        </div>
+        <div class="contact-form">
+          <form id="simple-contact">
+            <div class="form-group"><input type="text" placeholder="Your name"></div>
+            <div class="form-group"><input type="email" placeholder="Email address"></div>
+            <div class="form-group"><textarea rows="3" placeholder="Message"></textarea></div>
+            <button class="submit-btn" type="submit">Send message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (clean, without "Built with HTML/CSS/JS") -->
+  <footer>
+    © 2026 Sonam Gupta
+  </footer>
+
+  <script>
+    (function() {
+      // ------ TYPING ANIMATION (starts with SQL Developer) ------
+      const typedEl = document.getElementById('typing');
+      // Put "SQL Developer" first as requested
+      const phrases = ["SQL Developer", "Java Developer", "Backend Developer", "Data Analysis Enthusiast"];
+      let idx = 0, charIdx = 0, isDeleting = false;
+
+      function typeEffect() {
+        const current = phrases[idx];
+        if (isDeleting) {
+          typedEl.textContent = current.substring(0, charIdx--);
+          if (charIdx < 0) { isDeleting = false; idx = (idx + 1) % phrases.length; }
+        } else {
+          typedEl.textContent = current.substring(0, charIdx++);
+          if (charIdx > current.length) { isDeleting = true; setTimeout(typeEffect, 1000); return; }
+        }
+        setTimeout(typeEffect, isDeleting ? 60 : 100);
+      }
+      typeEffect();
+
+      // ------ REVEAL ON SCROLL ------
+      const reveals = document.querySelectorAll('.reveal');
+      function checkReveal() {
+        for (let el of reveals) {
+          const windowHeight = window.innerHeight;
+          const revealTop = el.getBoundingClientRect().top;
+          if (revealTop < windowHeight - 90) el.classList.add('active');
+        }
+      }
+      window.addEventListener('scroll', checkReveal);
+      window.addEventListener('load', checkReveal);
+
+      // ------ GITHUB PROJECTS + MANUAL HIGHLIGHTS ------
+      const projectGrid = document.getElementById('project-grid');
+      const GITHUB_USER = 'sonammg-123';
+
+      const manualProjects = [
+        { name: 'Car Rental System', desc: 'Java based car rental using JDBC/MySQL, manages 50+ vehicles.', lang: 'Java, JDBC, MySQL', url: 'https://github.com/sonammg-123/Car-Rental-System', stars: 4 },
+        { name: 'Employee Payroll System', desc: 'Automated payroll with Java, MySQL, reduces manual time.', lang: 'Java, MySQL, OOP', url: 'https://github.com/sonammg-123/Employee-Payroll-System', stars: 2 },
+        { name: 'Hotel Reservation System', desc: 'Hotel booking using Java Collections & MySQL, 200+ reservations.', lang: 'Java, Collections, MySQL', url: 'https://github.com/sonammg-123/Hotel-Reservation-System', stars: 3 },
+        { name: 'Employee Analyzing Trends', desc: 'SQL project analyzing workforce & department insights.', lang: 'SQL, MySQL', url: '#', stars: 0 },
+        { name: 'Data Cleaning (Call Center)', desc: 'SQL cleaning: nulls, duplicates, inconsistent records.', lang: 'SQL, MySQL', url: '#', stars: 0 }
+      ];
+
+      fetch(`https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`)
+        .then(res => res.json())
+        .then(repos => {
+          projectGrid.innerHTML = '';
+          const usedNames = new Set();
+
+          if (Array.isArray(repos)) {
+            repos.slice(0,5).forEach(r => {
+              if (!usedNames.has(r.name)) {
+                const card = document.createElement('div'); card.className = 'project-card';
+                card.innerHTML = `
+                  <div class="project-icon"><i class="fab fa-java"></i></div>
+                  <h3>${r.name}</h3>
+                  <p class="project-desc">${r.description ? r.description : 'Clean backend project.'}</p>
+                  <div class="tech-tags"><span>${r.language || 'Mixed'}</span></div>
+                  <div class="card-footer">
+                    <a href="${r.html_url}" target="_blank" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                    <span class="star-count"><i class="fas fa-star"></i> ${r.stargazers_count}</span>
+                  </div>
+                `;
+                projectGrid.appendChild(card);
+                usedNames.add(r.name);
+              }
+            });
+          }
+
+          manualProjects.forEach(p => {
+            if (!usedNames.has(p.name)) {
+              const card = document.createElement('div'); card.className = 'project-card';
+              card.innerHTML = `
+                <div class="project-icon"><i class="fas fa-code-branch"></i></div>
+                <h3>${p.name}</h3>
+                <p class="project-desc">${p.desc}</p>
+                <div class="tech-tags"><span>${p.lang}</span></div>
+                <div class="card-footer">
+                  <a href="${p.url}" target="_blank" class="github-link"><i class="fab fa-github"></i> GitHub</a>
+                  <span class="star-count">⭐ ${p.stars}</span>
+                </div>
+              `;
+              projectGrid.appendChild(card);
+              usedNames.add(p.name);
+            }
+          });
+        })
+        .catch(() => {
+          projectGrid.innerHTML = '';
+          manualProjects.forEach(p => {
+            const card = document.createElement('div'); card.className = 'project-card';
+            card.innerHTML = `
+              <div class="project-icon"><i class="fas fa-database"></i></div>
+              <h3>${p.name}</h3>
+              <p class="project-desc">${p.desc}</p>
+              <div class="tech-tags"><span>${p.lang}</span></div>
+              <div class="card-footer"><a href="${p.url}" class="github-link"><i class="fab fa-github"></i> Repo</a><span class="star-count">⭐ ${p.stars}</span></div>
+            `;
+            projectGrid.appendChild(card);
+          });
+        });
+
+      // ------ CERTIFICATES ------
+      const certGrid = document.getElementById('cert-grid');
+      const certs = [
+        { title: 'SQL and Relational Databases 101', issuer: 'ITVedant / Skills Network', link: 'https://courses.itvedant.skillsnetwork.site/certificates/ab442afef46e4c3a8c95aebc337c4d8d' },
+        { title: 'SQL Deep Dive Certification', issuer: 'LinkedIn Learning', link: 'https://www.linkedin.com/posts/sonam-gupta-a9102b2b8_i-am-pleased-to-share-that-i-have-successfully-share-7425416786185097217-0Zm4' },
+        { title: 'Deloitte Australia – Technology Simulation', issuer: 'Forage', link: 'https://www.theforage.com/completion-certificates/9PBTqmSxAf6zZTseP/udmxiyHeqYQLkTPvf_9PBTqmSxAf6zZTseP_pqcCDtrxpzou2MXeb_1763639836601_completion_certificate.pdf' },
+        { title: 'Java Programming (LinkedIn)', issuer: 'LinkedIn', link: 'https://www.linkedin.com/in/sonam-gupta-a9102b2b8/details/certifications/' },
+        { title: 'MySQL Advanced', issuer: 'LinkedIn', link: 'https://www.linkedin.com/in/sonam-gupta-a9102b2b8/details/certifications/' }
+      ];
+
+      certs.forEach(c => {
+        const card = document.createElement('div'); card.className = 'cert-card';
+        card.innerHTML = `
+          <div class="cert-icon"><i class="fas fa-certificate" style="color:var(--accent);"></i></div>
+          <h3 style="font-size:1.3rem;">${c.title}</h3>
+          <p style="color:#b1c0ff;">${c.issuer}</p>
+          <div style="margin-top:1.5rem;"><a href="${c.link}" target="_blank" class="github-link">View <i class="fas fa-arrow-up-right-from-square"></i></a></div>
+        `;
+        certGrid.appendChild(card);
+      });
+
+      // prevent form submit
+      document.getElementById('simple-contact').addEventListener('submit', (e) => e.preventDefault());
+    })();
+  </script>
+  <script>window.addEventListener('load', checkReveal);</script>
+</body>
+</html>
